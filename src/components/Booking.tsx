@@ -29,9 +29,10 @@ export function Booking() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-sage mb-4">Book Your Visit</div>
-          <h2 className="text-4xl md:text-5xl font-serif">
+          <h2 className="text-4xl md:text-5xl font-serif text-sage-deep">
             Quick, easy <span className="italic text-gradient">consultation booking</span>
           </h2>
+          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">Pick a mode, share your details, and we'll confirm within hours.</p>
         </div>
 
         <div className="glass-strong rounded-[2.5rem] p-6 md:p-10 grid lg:grid-cols-5 gap-8">

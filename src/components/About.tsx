@@ -28,14 +28,10 @@ export function About() {
               <div className="text-xs text-muted-foreground">BHMS · Classical Homeopath</div>
             </div>
           </div>
-          <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 4, repeat: Infinity }}
-            className="absolute -top-6 -right-2 glass rounded-2xl p-4 hidden md:block"
-          >
+          <div className="absolute -top-6 -right-2 glass-strong rounded-2xl p-4 hidden md:block gpu animate-float-slow">
             <Award className="size-6 text-sage" />
             <div className="text-xs mt-1 font-semibold">18+ Years</div>
-          </motion.div>
+          </div>
         </motion.div>
 
         <motion.div

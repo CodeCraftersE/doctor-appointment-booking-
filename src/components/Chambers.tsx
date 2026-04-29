@@ -12,7 +12,7 @@ export function Chambers() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
           <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-sage mb-4">Visit Us</div>
-          <h2 className="text-4xl md:text-5xl font-serif">
+          <h2 className="text-4xl md:text-5xl font-serif text-sage-deep">
             Chamber <span className="italic text-gradient">locations</span>
           </h2>
         </div>
