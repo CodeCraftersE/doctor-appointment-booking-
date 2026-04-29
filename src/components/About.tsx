@@ -28,14 +28,10 @@ export function About() {
               <div className="text-xs text-muted-foreground">BHMS · Classical Homeopath</div>
             </div>
           </div>
-          <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 4, repeat: Infinity }}
-            className="absolute -top-6 -right-2 glass rounded-2xl p-4 hidden md:block"
-          >
+          <div className="absolute -top-6 -right-2 glass-strong rounded-2xl p-4 hidden md:block gpu animate-float-slow">
             <Award className="size-6 text-sage" />
             <div className="text-xs mt-1 font-semibold">18+ Years</div>
-          </motion.div>
+          </div>
         </motion.div>
 
         <motion.div
@@ -45,10 +41,10 @@ export function About() {
           transition={{ duration: 0.7 }}
         >
           <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-sage mb-4">About the Doctor</div>
-          <h2 className="text-4xl md:text-5xl font-serif leading-tight">
+          <h2 className="text-4xl md:text-5xl font-serif leading-tight text-sage-deep">
             A holistic path to <span className="italic text-gradient">lasting wellness</span>
           </h2>
-          <p className="mt-5 text-muted-foreground leading-relaxed">
+          <p className="mt-5 text-muted-foreground leading-relaxed text-pretty">
             With nearly two decades of practice in classical homeopathy, Dr. Sandip Das treats the individual — not just the symptom. Each remedy is selected through deep case study, addressing the mind and body as one continuous system.
           </p>
 

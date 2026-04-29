@@ -14,7 +14,7 @@ export function WhyHomeopathy() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
           <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-sage mb-4">Why Homeopathy</div>
-          <h2 className="text-4xl md:text-5xl font-serif">
+          <h2 className="text-4xl md:text-5xl font-serif text-sage-deep">
             Gentle medicine, <span className="italic text-gradient">profound results</span>
           </h2>
         </div>
