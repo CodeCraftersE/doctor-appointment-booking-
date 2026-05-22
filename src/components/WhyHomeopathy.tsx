@@ -3,14 +3,14 @@ import { Leaf, ShieldCheck, Baby, Sparkles } from "lucide-react";
 
 const reasons = [
   { icon: Leaf, title: "Treats Root Cause", desc: "Goes beyond symptoms to address the underlying imbalance." },
-  { icon: ShieldCheck, title: "Zero Side Effects", desc: "Ultra-diluted natural substances, gentle on the body." },
+  { icon: ShieldCheck, title: "Gentle & Natural", desc: "Minimal risk of side effects through natural precision." },
   { icon: Baby, title: "Safe for All Ages", desc: "From infants to seniors — including pregnancy." },
   { icon: Sparkles, title: "Long-lasting Cure", desc: "Constitutional remedies for sustained wellness." },
 ];
 
 export function WhyHomeopathy() {
   return (
-    <section className="relative py-24 px-4 md:px-8">
+    <section id="why-homeopathy" className="relative py-24 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
           <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-sage mb-4">Why Homeopathy</div>

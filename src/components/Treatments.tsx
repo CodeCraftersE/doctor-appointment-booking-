@@ -16,6 +16,7 @@ export function Treatments() {
   return (
     <section id="treatments" className="relative py-24 px-4 md:px-8 overflow-hidden">
       <Globules count={4} className="opacity-60" />
+      
       <div className="max-w-6xl mx-auto text-center mb-14 relative">
         <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-sage mb-4">Core Treatments</div>
         <h2 className="text-4xl md:text-5xl font-serif text-sage-deep">
@@ -52,15 +53,19 @@ export function Treatments() {
               viewport={{ once: true, margin: "-80px" }}
               transition={{ delay: (i % 3) * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -6 }}
-              className={`glass-strong rounded-3xl p-6 group ${i === 1 || i === 4 ? "lg:translate-y-12" : ""}`}
+              className={`glass-strong rounded-[2rem] p-6 md:p-8 group ${i === 1 || i === 4 ? "lg:translate-y-12" : ""}`}
             >
-              <div className="size-12 rounded-2xl gradient-aqua grid place-items-center text-primary-foreground shadow-md group-hover:scale-110 transition-transform">
-                <s.icon className="size-5" />
+              <div className="size-12 md:size-14 rounded-2xl gradient-aqua grid place-items-center text-primary-foreground shadow-md group-hover:scale-110 transition-transform">
+                <s.icon className="size-5 md:size-6" />
               </div>
-              <h3 className="font-serif text-2xl mt-4 text-sage-deep">{s.title}</h3>
-              <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{s.desc}</p>
-              <a href="#booking" className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-sage hover:gap-2 transition-all">
-                Consult now <span aria-hidden>→</span>
+              <h3 className="font-serif text-xl md:text-2xl mt-5 text-sage-deep">{s.title}</h3>
+              <p className="text-xs md:text-sm text-muted-foreground mt-2 leading-relaxed">{s.desc}</p>
+              <a 
+                href="#booking" 
+                onClick={() => window.dispatchEvent(new CustomEvent('select-category', { detail: s.title }))}
+                className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-sage hover:gap-3 transition-all uppercase tracking-wider"
+              >
+                Consult now <span aria-hidden className="text-lg">→</span>
               </a>
             </motion.div>
           ))}

@@ -3,7 +3,7 @@ import { MessageCircle } from "lucide-react";
 export function WhatsAppFloat() {
   return (
     <a
-      href="https://wa.me/919999999999"
+      href={`https://api.whatsapp.com/send/?phone=${import.meta.env.VITE_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Hello, I would like to consult with ${import.meta.env.VITE_DOCTOR_NAME}. Kindly let me know the available appointment slots. Thank you.`)}&type=phone_number&app_absent=0`}
       target="_blank"
       rel="noreferrer"
       aria-label="WhatsApp consultation"

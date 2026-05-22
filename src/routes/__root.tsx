@@ -1,6 +1,8 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { CustomCursor } from "@/components/CustomCursor";
+import { BottomNav } from "@/components/BottomNav";
 
 function NotFoundComponent() {
   return (
@@ -23,18 +25,20 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Dr. Sandip Das – Classical Homeopathy | Natural Healing" },
-      { name: "description", content: "Personalized classical homeopathic care with zero side effects. Book consultation with Dr. Sandip Das in Howrah for skin, digestive, stress, immunity & chronic care." },
-      { name: "author", content: "Dr. Sandip Das" },
-      { property: "og:title", content: "Dr. Sandip Das – Classical Homeopathy" },
-      { property: "og:description", content: "Restore your health naturally with personalized homeopathic care." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+  head: () => {
+    const doctorName = import.meta.env.VITE_DOCTOR_NAME || "Dr. Sandip Das";
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" },
+        { title: `${doctorName} – Classical Homeopathy | Natural Healing` },
+        { name: "description", content: `Personalized classical homeopathic care with a gentle, natural approach. Book consultation with ${doctorName} in Howrah for skin, digestive, stress, immunity & chronic care.` },
+        { name: "author", content: doctorName },
+        { property: "og:title", content: `${doctorName} – Classical Homeopathy` },
+        { property: "og:description", content: "Restore your health naturally with personalized homeopathic care." },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -44,7 +48,8 @@ export const Route = createRootRoute({
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap",
       },
     ],
-  }),
+  };
+},
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -57,6 +62,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <CustomCursor />
         {children}
         <Scripts />
       </body>
@@ -65,5 +71,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+      <BottomNav />
+    </>
+  );
 }

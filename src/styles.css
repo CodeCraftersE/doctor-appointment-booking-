@@ -133,6 +133,14 @@
     text-rendering: optimizeLegibility;
     min-height: 100vh;
   }
+  @media (min-width: 769px) and (pointer: fine) {
+    * {
+      cursor: none !important;
+    }
+    a, button, input, select, textarea, [role="button"] {
+      cursor: none !important;
+    }
+  }
   @media (min-width: 1024px) {
     body { background-attachment: fixed; }
   }
@@ -270,4 +278,45 @@
   animation: shimmer 2.8s ease-in-out infinite;
   pointer-events: none;
   border-radius: inherit;
+}
+
+/* === Mobile Overflow Fix === */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative;
+  }
+
+  /* Prevent containers from exceeding viewport width */
+  #root, 
+  main, 
+  section, 
+  .container,
+  div:not(.no-fix) {
+    max-width: 100vw !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Fix for elements that might cause right-side overflow */
+  .flex, .grid, [class*="grid-"], [class*="flex-"] {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Ensure media scales down correctly */
+  img, video, iframe, canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Fix for fixed/absolute elements like the Navbar */
+  .fixed, .absolute {
+    max-width: 100vw !important;
+  }
 }

@@ -9,7 +9,7 @@ const items = [
 
 export function Testimonials() {
   return (
-    <section className="relative py-24 px-4 md:px-8">
+    <section id="testimonials" className="relative py-24 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
           <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-sage mb-4">Patient Stories</div>
