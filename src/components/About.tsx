@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import doctor from "@/assets/sandip-das-portrait.jpg";
-import { Award, Heart, Sparkles, Users } from "lucide-react";
+import { Award, Heart, Sprout, Users } from "lucide-react";
 
 export function About() {
   return (
@@ -52,7 +52,7 @@ export function About() {
           <div className="mt-8 grid sm:grid-cols-3 gap-3">
             {[
               { icon: Heart, title: "Patient First", desc: "In-depth listening" },
-              { icon: Sparkles, title: "Root Cause", desc: "Constitutional cure" },
+              { icon: Sprout, title: "Root Cause", desc: "Constitutional cure" },
               { icon: Award, title: "Trusted", desc: "12,000+ patients" },
             ].map((f, i) => (
               <motion.div

@@ -423,7 +423,7 @@ export default function BodyAssessment() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 1.05 }}
-                  className="glass-strong rounded-[2.5rem] p-8 md:p-10 h-full flex flex-col"
+                  className="glass-strong rounded-[2.5rem] p-6 md:p-10 h-full flex flex-col"
                 >
                   <div className="flex-grow">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-mint/20 text-mint-700 text-[10px] font-bold uppercase tracking-widest mb-6">
@@ -433,9 +433,6 @@ export default function BodyAssessment() {
                     <h3 className="text-3xl font-serif text-sage-deep mb-6">Consultation <span className="italic text-gradient">Summary</span></h3>
                     
                     <div className="glass rounded-[2rem] p-6 border border-sage/10 relative overflow-hidden group">
-                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Sparkles className="size-12" />
-                      </div>
                       <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">Message Preview</div>
                       <p className="text-sm text-sage-deep leading-relaxed italic pr-8">
                         "{generatedMessage}"
@@ -452,13 +449,13 @@ export default function BodyAssessment() {
                       </button>
                     </div>
 
-                    <div className="mt-8 p-5 rounded-2xl bg-amber-50/50 border border-amber-200/50 flex gap-4">
-                      <div className="size-10 rounded-xl bg-amber-100 grid place-items-center text-amber-600 shrink-0">
-                        <AlertCircle className="size-5" />
+                    <div className="hidden sm:flex mt-8 p-4 sm:p-5 rounded-2xl bg-amber-50/50 border border-amber-200/50 items-start gap-3 sm:gap-4">
+                      <div className="size-8 sm:size-10 rounded-xl bg-amber-100 grid place-items-center text-amber-600 shrink-0">
+                        <AlertCircle className="size-4 sm:size-5" />
                       </div>
-                      <div className="space-y-1">
+                      <div className="space-y-1 flex-1 min-w-0">
                         <div className="text-xs font-bold text-amber-800">Recommendation</div>
-                        <p className="text-[11px] text-amber-700 leading-relaxed">
+                        <p className="text-[11px] text-amber-700 leading-relaxed break-words">
                           Based on your symptoms and severity ({severity}/10), a professional constitutional analysis is highly recommended to address the root cause.
                         </p>
                       </div>

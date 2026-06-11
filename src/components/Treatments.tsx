@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import { Sparkles, Leaf, Brain, Shield, Activity, Droplet } from "lucide-react";
+import { Flower2, Leaf, Brain, Shield, Activity, Droplet } from "lucide-react";
 import heroBottle from "@/assets/hero-bottle.png";
 import { Globules } from "./Globules";
 
 const services = [
-  { icon: Sparkles, title: "Skin Problems", desc: "Eczema, psoriasis, acne and chronic dermatitis." },
+  { icon: Flower2, title: "Skin Problems", desc: "Eczema, psoriasis, acne and chronic dermatitis." },
   { icon: Leaf, title: "Digestive Issues", desc: "Acidity, IBS, ulcers and gut imbalances." },
   { icon: Brain, title: "Stress & Anxiety", desc: "Mood, sleep and emotional equilibrium." },
   { icon: Shield, title: "Immunity Boost", desc: "Recurrent infections, allergies, low immunity." },
