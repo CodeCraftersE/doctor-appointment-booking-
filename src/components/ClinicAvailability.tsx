@@ -12,6 +12,7 @@ import {
   Stethoscope,
   Map as MapIcon
 } from "lucide-react";
+import { DirectBookingDialog } from "./DirectBookingDialog";
 
 interface Clinic {
   id: string;
@@ -215,6 +216,25 @@ export function ClinicAvailability() {
 
               {/* Right Side: CTAs */}
               <div className="flex flex-col gap-4 mt-4 lg:mt-0">
+                <DirectBookingDialog 
+                  clinicName={clinic.name}
+                  clinicDays={clinic.days}
+                  trigger={
+                    <button
+                      className="group relative w-full inline-flex items-center justify-between p-1.5 pr-6 rounded-full bg-[#05443e] text-white shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all text-left"
+                    >
+                      <div className="size-12 rounded-full bg-white/20 grid place-items-center backdrop-blur-md shrink-0">
+                        <Calendar className="size-5" />
+                      </div>
+                      <div className="flex flex-col items-start px-3 flex-grow">
+                        <span className="font-bold tracking-wide text-sm leading-tight">Direct Website Booking</span>
+                        <span className="text-[9px] text-[#68eed6] uppercase tracking-widest font-semibold mt-0.5">Email required</span>
+                      </div>
+                      <ChevronRight className="size-5 shrink-0 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  }
+                />
+
                 <a
                   href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hello, I would like to consult with ${import.meta.env.VITE_DOCTOR_NAME}.`)}`}
                   target="_blank"

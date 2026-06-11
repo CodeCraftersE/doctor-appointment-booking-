@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Activity, RotateCcw, Languages, HeartPulse, Droplet, Moon, Utensils, Brain, Clock, ShieldCheck, Weight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Activity, RotateCcw, Languages, HeartPulse, Droplet, Moon, Utensils, Brain, Clock, ShieldCheck, Weight, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
 // --- Translations ---
@@ -10,12 +10,12 @@ const t = {
     description: "Personalized insights for your holistic wellness journey.",
     calculate: "Calculate",
     recalculate: "Reset",
-    bmi: { title: "BMI Calculator", desc: "Check your Body Mass Index and health range.", weight: "Weight (kg)", height: "Height (cm)", result: "Your BMI" },
-    water: { title: "Daily Water Intake", desc: "Calculate how much water your body needs daily.", weight: "Weight (kg)", activity: "Exercise (mins/day)", result: "Daily Target" },
-    sleep: { title: "Sleep Calculator", desc: "Analyze your sleep cycle and improve sleep quality.", age: "Age (years)", result: "Recommended Sleep" },
-    calorie: { title: "Calorie Need Estimator", desc: "Estimate your daily calorie needs based on your lifestyle.", gender: "Gender", male: "Male", female: "Female", result: "Maintenance Calories" },
-    stress: { title: "Stress Score Checker", desc: "Evaluate your stress level and improve your mental wellness.", q1: "How often do you feel overwhelmed?", q2: "How poor is your sleep quality?", q3: "Physical tension or headaches?", sliderLow: "Never", sliderHigh: "Always", result: "Stress Level" },
-    bedtime: { title: "Ideal Bedtime Calculator", desc: "Find your ideal bedtime for better sleep and energy.", wake: "Wake-up Time", hours: "Target Hours", result: "Go to bed at" }
+    bmi: { title: "BMI Calculator", desc: "Understand your body composition in harmony with your nature.", weight: "Weight (kg)", height: "Height (cm)", result: "Your BMI" },
+    water: { title: "Daily Water Intake", desc: "Calculate your hydration needs for vital flow and cellular clarity.", weight: "Weight (kg)", activity: "Exercise (mins/day)", result: "Daily Target" },
+    sleep: { title: "Sleep Calculator", desc: "Find the perfect rhythm for restorative rest and deep healing.", age: "Age (years)", result: "Recommended Sleep" },
+    calorie: { title: "Calorie Need Estimator", desc: "Balance your energy intake for holistic vitality and daily strength.", gender: "Gender", male: "Male", female: "Female", result: "Maintenance Calories" },
+    stress: { title: "Stress Score Checker", desc: "Assess your inner peace and emotional equilibrium today.", q1: "How often do you feel overwhelmed?", q2: "How poor is your sleep quality?", q3: "Physical tension or headaches?", sliderLow: "Never", sliderHigh: "Always", result: "Stress Level" },
+    bedtime: { title: "Ideal Bedtime Calculator", desc: "Align your sleep cycle with the natural world's circadian flow.", wake: "Wake-up Time", hours: "Target Hours", result: "Go to bed at" }
   },
   bn: {
     title: "স্মার্ট হেলথ ক্যালকুলেটর",
@@ -39,138 +39,173 @@ export default function SmartHealthCalculators() {
 
   const [activeCalc, setActiveCalc] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (activeCalc) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [activeCalc]);
+
   const calculators = [
-    { id: "bmi", icon: Weight, title: l.bmi.title, desc: l.bmi.desc, bgClass: "bg-[#d1fae5]/50", iconClass: "text-[#059669]" },
-    { id: "water", icon: Droplet, title: l.water.title, desc: l.water.desc, bgClass: "bg-[#dbeafe]/50", iconClass: "text-[#3b82f6] fill-current" },
-    { id: "sleep", icon: Moon, title: l.sleep.title, desc: l.sleep.desc, bgClass: "bg-[#ede9fe]/50", iconClass: "text-[#8b5cf6] fill-current" },
-    { id: "calorie", icon: Utensils, title: l.calorie.title, desc: l.calorie.desc, bgClass: "bg-[#fef3c7]/50", iconClass: "text-[#f59e0b] fill-current" },
-    { id: "stress", icon: Brain, title: l.stress.title, desc: l.stress.desc, bgClass: "bg-[#ffe4e6]/50", iconClass: "text-[#f43f5e]" },
-    { id: "bedtime", icon: Clock, title: l.bedtime.title, desc: l.bedtime.desc, bgClass: "bg-[#d1fae5]/50", iconClass: "text-[#10b981]" },
+    { id: "bmi", icon: Weight, title: l.bmi.title, desc: l.bmi.desc, bgClass: "bg-[#e2f5ec]", iconClass: "text-[#4a654d]", action: "Measure Equilibrium" },
+    { id: "water", icon: Droplet, title: l.water.title, desc: l.water.desc, bgClass: "bg-[#e2eff5]", iconClass: "text-[#4a5a65] fill-current", action: "Calibrate Flow" },
+    { id: "sleep", icon: Moon, title: l.sleep.title, desc: l.sleep.desc, bgClass: "bg-[#edeef2]", iconClass: "text-[#4b4e63] fill-current", action: "Find Rhythm" },
+    { id: "calorie", icon: Utensils, title: l.calorie.title, desc: l.calorie.desc, bgClass: "bg-[#f5f1e2]", iconClass: "text-[#655e4a] fill-current", action: "Balance Energy" },
+    { id: "stress", icon: Brain, title: l.stress.title, desc: l.stress.desc, bgClass: "bg-[#f5e2e4]", iconClass: "text-[#654a4f]", action: "Check Peace" },
+    { id: "bedtime", icon: Clock, title: l.bedtime.title, desc: l.bedtime.desc, bgClass: "bg-[#e2f5ec]", iconClass: "text-[#4a654d]", action: "Align Cycle" },
   ];
 
+  const activeCalcData = calculators.find(c => c.id === activeCalc);
+
   return (
-    <div className="min-h-screen bg-[#f8faf9] relative font-sans selection:bg-[#68eed6] selection:text-[#05443e]">
+    <div className="min-h-screen bg-[#f8faf9] relative font-sans selection:bg-[#68eed6] selection:text-[#05443e] overflow-x-hidden">
       
-      {/* Background Gradients */}
-      <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-[#e0f5f0] to-[#f8faf9] -z-10" />
+      {/* Background Gradients (Ethereal feel) */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[10%] left-[10%] w-[300px] h-[300px] bg-[#b1ceb1]/20 rounded-full blur-[80px]" />
+        <div className="absolute top-[40%] right-[10%] w-[400px] h-[400px] bg-[#dde5d9]/30 rounded-full blur-[100px]" />
+      </div>
 
       {/* Header Utilities */}
-      <header className="px-5 pt-6 pb-2 flex items-center justify-between max-w-md mx-auto relative z-10">
-        <Link to="/" className="size-10 rounded-full bg-white shadow-sm text-[#05443e] flex items-center justify-center hover:scale-105 transition-transform">
+      <header className="px-5 pt-6 pb-2 flex items-center justify-between max-w-6xl mx-auto relative z-10">
+        <Link to="/" className="size-10 rounded-full bg-white/80 backdrop-blur border border-white/50 shadow-sm text-[#05443e] flex items-center justify-center hover:scale-105 transition-transform">
           <ChevronLeft className="size-5" />
         </Link>
         <button 
           onClick={() => setLang(lang === "en" ? "bn" : "en")}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white shadow-sm text-[#05443e] text-xs font-bold uppercase tracking-wider hover:scale-105 transition-transform"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur border border-white/50 shadow-sm text-[#05443e] text-xs font-bold uppercase tracking-wider hover:scale-105 transition-transform"
         >
           <Languages className="size-3.5" />
           {lang === "en" ? "বাংলা" : "EN"}
         </button>
       </header>
 
-      <div className="px-5 max-w-md mx-auto relative z-10 pb-20">
+      <div className="px-5 max-w-6xl mx-auto relative z-10 pb-24">
         
-        {/* Title Section (Exact Screenshot Match) */}
-        <div className="relative text-center mt-4 mb-10">
-          <div className="absolute -top-6 left-0 size-16 bg-white rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.05)] flex items-center justify-center">
-            <HeartPulse className="size-8 text-[#059669]" />
+        {/* Title Section */}
+        <div className="relative text-center mt-8 md:mt-12 mb-16 flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#e2f5ec] text-[#334d36] text-[12px] font-semibold mb-6 shadow-sm border border-[#b1ceb1]/30">
+            <HeartPulse className="size-4" />
+            Holistic Clinical Tools
           </div>
           
-          <h1 className="text-[34px] leading-[1.1] font-serif mt-12">
-            <span className="text-[#059669] font-medium block">Smart</span>
-            <span className="text-[#0f172a] font-bold">Health Calculators</span>
+          <h1 className="text-[36px] md:text-[56px] leading-[1.1] font-serif text-[#47614a]">
+            Nurture Your Well-being with <br className="hidden md:block"/>
+            <span className="italic">Smart Health Tools</span>
           </h1>
-          <p className="text-slate-500 text-[14px] leading-relaxed mt-4 max-w-[260px] mx-auto">
+          <p className="text-slate-500 text-[15px] md:text-[18px] leading-relaxed mt-6 max-w-2xl mx-auto">
             {l.description}
           </p>
-          <div className="flex items-center justify-center gap-1.5 mt-5">
-            <div className="h-1 w-8 bg-[#059669] rounded-full"></div>
-            <div className="size-1 bg-[#059669]/30 rounded-full"></div>
+          <div className="flex items-center justify-center gap-1.5 mt-8">
+            <div className="h-1 w-8 bg-[#47614a] rounded-full"></div>
+            <div className="size-1 bg-[#47614a]/30 rounded-full"></div>
           </div>
         </div>
 
-        {/* Cards List */}
-        <div className="grid gap-3.5">
-          <AnimatePresence mode="popLayout">
-            {calculators.map((calc) => (
-              <motion.div
-                layout
-                key={calc.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className={`bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-slate-50/50 ${activeCalc && activeCalc !== calc.id ? 'hidden' : 'block'}`}
-              >
-                {/* Collapsed State */}
-                <div 
-                  onClick={() => setActiveCalc(activeCalc === calc.id ? null : calc.id)}
-                  className="p-4 flex items-center gap-4 cursor-pointer"
-                >
-                  <div className={`size-14 rounded-2xl ${calc.bgClass} flex items-center justify-center shrink-0`}>
-                    <calc.icon className={`size-6 ${calc.iconClass}`} strokeWidth={calc.id === "stress" || calc.id === "bedtime" ? 2 : 1.5} />
-                  </div>
-                  <div className="flex-1 min-w-0 pr-2">
-                    <h3 className="text-[#0f172a] text-[15px] font-bold truncate tracking-tight">{calc.title}</h3>
-                    <p className="text-[12px] text-slate-500 mt-0.5 leading-[1.3]">{calc.desc}</p>
-                  </div>
-                  <motion.div
-                    animate={{ rotate: activeCalc === calc.id ? 90 : 0 }}
-                    className="size-[28px] rounded-full bg-[#f0fdf4] flex items-center justify-center shrink-0 text-[#059669]"
-                  >
-                    <ChevronRight className="size-4" strokeWidth={3} />
-                  </motion.div>
-                </div>
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {calculators.map((calc) => (
+            <motion.div
+              key={calc.id}
+              whileHover={{ y: -5 }}
+              onClick={() => setActiveCalc(calc.id)}
+              className="group cursor-pointer bg-white/70 backdrop-blur-xl border border-white p-8 md:p-10 rounded-[32px] shadow-[0_8px_30px_rgba(95,122,97,0.06)] hover:shadow-[0_20px_50px_rgba(95,122,97,0.12)] transition-all duration-500 flex flex-col items-center text-center relative overflow-hidden"
+            >
+              {/* Card Background Glow */}
+              <div className={`absolute top-0 right-0 w-32 h-32 ${calc.bgClass} opacity-50 rounded-full blur-3xl -mr-10 -mt-10 transition-opacity group-hover:opacity-80`} />
 
-                {/* Expanded Calculator State */}
-                <AnimatePresence>
-                  {activeCalc === calc.id && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="px-5 pb-5 pt-2 border-t border-slate-50"
-                    >
-                      {activeCalc === "bmi" && <BmiCalculator l={l} />}
-                      {activeCalc === "water" && <WaterCalculator l={l} />}
-                      {activeCalc === "sleep" && <SleepCalculator l={l} />}
-                      {activeCalc === "calorie" && <CalorieCalculator l={l} />}
-                      {activeCalc === "stress" && <StressCalculator l={l} />}
-                      {activeCalc === "bedtime" && <BedtimeCalculator l={l} />}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+              <div className={`w-16 h-16 rounded-full ${calc.bgClass} border border-white/50 shadow-sm flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 relative z-10`}>
+                <calc.icon className={`size-7 ${calc.iconClass}`} strokeWidth={1.5} />
+              </div>
+              <h3 className="text-[#191c1b] text-[20px] md:text-[22px] font-serif font-medium mb-3 leading-tight">{calc.title}</h3>
+              <p className="text-[14px] md:text-[15px] text-[#596057] mb-8 leading-relaxed max-w-xs">{calc.desc}</p>
+              
+              <div className="mt-auto flex items-center justify-center gap-2 text-[#47614a] text-[14px] font-semibold tracking-wide uppercase group-hover:gap-3 transition-all duration-300">
+                {calc.action} <ChevronRight className="size-4" strokeWidth={2.5} />
+              </div>
+            </motion.div>
+          ))}
         </div>
 
         {/* Footer Pill */}
-        <div className="mt-8 flex items-center justify-center">
-          <div className="inline-flex items-center gap-2 px-5 py-3 bg-white rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100 text-[11px] font-medium text-slate-500 tracking-wide">
-            <ShieldCheck className="size-4 text-[#059669]" />
+        <div className="mt-16 flex items-center justify-center">
+          <div className="inline-flex items-center gap-2 px-6 py-3.5 bg-white/80 backdrop-blur rounded-full shadow-sm border border-[#e1e3e1] text-[12px] font-semibold text-[#596057] tracking-wider uppercase">
+            <ShieldCheck className="size-4 text-[#47614a]" />
             Your health. Your insights. Your better tomorrow.
           </div>
         </div>
 
       </div>
+
+      {/* Modal Overlay for Active Calculator */}
+      <AnimatePresence>
+        {activeCalc && activeCalcData && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 bg-[#f8faf9]/80 backdrop-blur-md overflow-y-auto"
+            onClick={() => setActiveCalc(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md bg-white rounded-[32px] shadow-[0_30px_80px_rgba(71,97,74,0.15)] border border-[#e1e3e1] relative overflow-hidden my-auto"
+            >
+              {/* Modal Header */}
+              <div className={`px-6 py-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-white to-${activeCalcData.bgClass.replace('bg-', '')}/30`}>
+                <div className="flex items-center gap-3">
+                  <div className={`size-10 rounded-full ${activeCalcData.bgClass} flex items-center justify-center`}>
+                    <activeCalcData.icon className={`size-5 ${activeCalcData.iconClass}`} strokeWidth={2} />
+                  </div>
+                  <div>
+                    <h3 className="font-serif font-medium text-[#191c1b] text-lg leading-tight">{activeCalcData.title}</h3>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setActiveCalc(null)}
+                  className="size-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6">
+                {activeCalc === "bmi" && <BmiCalculator l={l} />}
+                {activeCalc === "water" && <WaterCalculator l={l} />}
+                {activeCalc === "sleep" && <SleepCalculator l={l} />}
+                {activeCalc === "calorie" && <CalorieCalculator l={l} />}
+                {activeCalc === "stress" && <StressCalculator l={l} />}
+                {activeCalc === "bedtime" && <BedtimeCalculator l={l} />}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
 
 // ==========================================
-// CALCULATOR COMPONENTS
+// CALCULATOR COMPONENTS (Optimized for Modal)
 // ==========================================
 
 function InputGroup({ label, value, onChange, type = "number", placeholder = "" }: any) {
   return (
     <div className="space-y-1.5 flex-1">
-      <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground ml-1">{label}</label>
+      <label className="text-[11px] font-bold uppercase tracking-wider text-[#596057] ml-1">{label}</label>
       <input
         type={type}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full bg-white/50 border border-sage/20 rounded-xl px-4 py-3 text-[#05443e] font-semibold focus:outline-none focus:ring-2 focus:ring-[#68eed6] focus:bg-white transition-all shadow-inner"
+        className="w-full bg-[#f8faf9] border border-[#dae2d6] rounded-xl px-4 py-3.5 text-[#191c1b] font-medium focus:outline-none focus:ring-2 focus:ring-[#b1ceb1] focus:bg-white focus:border-transparent transition-all shadow-sm"
       />
     </div>
   );
@@ -180,10 +215,10 @@ function ActionButton({ onClick, text, isReset = false }: any) {
   return (
     <button
       onClick={onClick}
-      className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-md active:scale-[0.98] ${
+      className={`w-full py-4 rounded-xl font-semibold text-[15px] flex items-center justify-center gap-2 transition-all shadow-sm active:scale-[0.98] mt-6 ${
         isReset 
-          ? "bg-white text-muted-foreground border border-sage/10 hover:bg-gray-50" 
-          : "bg-[#05443e] text-white hover:bg-[#03302b]"
+          ? "bg-[#f2f4f2] text-[#596057] hover:bg-[#eceeec] border border-[#e1e3e1]" 
+          : "bg-[#47614a] text-white hover:bg-[#334d36] hover:shadow-md"
       }`}
     >
       {isReset ? <RotateCcw className="size-4" /> : <Activity className="size-4" />}
@@ -192,18 +227,18 @@ function ActionButton({ onClick, text, isReset = false }: any) {
   );
 }
 
-function ResultCard({ title, value, subtext, color = "text-[#05443e]" }: any) {
+function ResultCard({ title, value, subtext, color = "text-[#47614a]" }: any) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="mt-6 p-6 rounded-2xl bg-gradient-to-br from-[#f0f9f6] to-white border border-[#68eed6]/20 shadow-lg relative overflow-hidden"
+      className="mt-6 p-6 rounded-2xl bg-gradient-to-br from-[#efffec]/50 to-white border border-[#cceacc]/40 shadow-sm relative overflow-hidden"
     >
-      <div className="absolute top-0 right-0 w-32 h-32 bg-[#68eed6]/10 rounded-full blur-2xl -mr-10 -mt-10" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[#cceacc]/20 rounded-full blur-2xl -mr-10 -mt-10" />
       <div className="relative z-10 text-center">
-        <h4 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2">{title}</h4>
-        <div className={`text-4xl font-black tracking-tight mb-1 ${color}`}>{value}</div>
-        <p className="text-sm font-medium text-[#05443e]/80">{subtext}</p>
+        <h4 className="text-[11px] font-bold uppercase tracking-widest text-[#596057] mb-2">{title}</h4>
+        <div className={`text-[40px] font-serif font-medium tracking-tight mb-1 ${color} leading-none`}>{value}</div>
+        <p className="text-[14px] font-medium text-[#47614a]/80 mt-2">{subtext}</p>
       </div>
     </motion.div>
   );
@@ -226,17 +261,17 @@ function BmiCalculator({ l }: { l: any }) {
   const reset = () => { setResult(null); setWeight(""); setHeight(""); };
 
   let category = "";
-  let color = "text-[#05443e]";
+  let color = "text-[#47614a]";
   if (result) {
     if (result < 18.5) { category = "Underweight"; color = "text-blue-500"; }
-    else if (result < 25) { category = "Normal Weight"; color = "text-emerald-500"; }
+    else if (result < 25) { category = "Normal Weight"; color = "text-emerald-600"; }
     else if (result < 30) { category = "Overweight"; color = "text-orange-500"; }
     else { category = "Obese"; color = "text-red-500"; }
   }
 
   return (
-    <div className="space-y-4 mt-2">
-      <div className="flex gap-3">
+    <div className="space-y-4">
+      <div className="flex gap-4">
         <InputGroup label={l.bmi.weight} value={weight} onChange={(e: any) => setWeight(e.target.value)} />
         <InputGroup label={l.bmi.height} value={height} onChange={(e: any) => setHeight(e.target.value)} />
       </div>
@@ -270,8 +305,8 @@ function WaterCalculator({ l }: { l: any }) {
   const reset = () => { setResult(null); setWeight(""); setActivity(""); };
 
   return (
-    <div className="space-y-4 mt-2">
-      <div className="flex gap-3">
+    <div className="space-y-4">
+      <div className="flex gap-4">
         <InputGroup label={l.water.weight} value={weight} onChange={(e: any) => setWeight(e.target.value)} />
         <InputGroup label={l.water.activity} value={activity} onChange={(e: any) => setActivity(e.target.value)} />
       </div>
@@ -279,7 +314,7 @@ function WaterCalculator({ l }: { l: any }) {
         <ActionButton text={l.calculate} onClick={calculate} />
       ) : (
         <>
-          <ResultCard title={l.water.result} value={`${result} L`} subtext="Glasses: ~Math.round(result * 4)" />
+          <ResultCard title={l.water.result} value={`${result} L`} subtext={`Glasses: ~${Math.round(result * 4)}`} />
           <ActionButton text={l.recalculate} onClick={reset} isReset />
         </>
       )}
@@ -308,7 +343,7 @@ function SleepCalculator({ l }: { l: any }) {
   const reset = () => { setResult(null); setAge(""); };
 
   return (
-    <div className="space-y-4 mt-2">
+    <div className="space-y-4">
       <InputGroup label={l.sleep.age} value={age} onChange={(e: any) => setAge(e.target.value)} />
       {!result ? (
         <ActionButton text={l.calculate} onClick={calculate} />
@@ -345,12 +380,12 @@ function CalorieCalculator({ l }: { l: any }) {
   const reset = () => { setResult(null); setWeight(""); setHeight(""); setAge(""); };
 
   return (
-    <div className="space-y-4 mt-2">
-      <div className="flex gap-2 p-1 bg-sage/5 rounded-xl border border-sage/10 mb-2">
-        <button onClick={() => setGender("M")} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${gender === "M" ? "bg-white shadow-sm text-[#05443e]" : "text-muted-foreground"}`}>{l.calorie.male}</button>
-        <button onClick={() => setGender("F")} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${gender === "F" ? "bg-white shadow-sm text-[#05443e]" : "text-muted-foreground"}`}>{l.calorie.female}</button>
+    <div className="space-y-4">
+      <div className="flex gap-2 p-1.5 bg-[#f2f4f2] rounded-[14px] border border-[#e1e3e1] mb-2">
+        <button onClick={() => setGender("M")} className={`flex-1 py-2.5 rounded-[10px] text-[13px] font-bold transition-all ${gender === "M" ? "bg-white shadow-sm text-[#191c1b]" : "text-[#596057] hover:bg-black/5"}`}>{l.calorie.male}</button>
+        <button onClick={() => setGender("F")} className={`flex-1 py-2.5 rounded-[10px] text-[13px] font-bold transition-all ${gender === "F" ? "bg-white shadow-sm text-[#191c1b]" : "text-[#596057] hover:bg-black/5"}`}>{l.calorie.female}</button>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <InputGroup label="Weight (kg)" value={weight} onChange={(e: any) => setWeight(e.target.value)} />
         <InputGroup label="Height (cm)" value={height} onChange={(e: any) => setHeight(e.target.value)} />
       </div>
@@ -360,7 +395,7 @@ function CalorieCalculator({ l }: { l: any }) {
         <ActionButton text={l.calculate} onClick={calculate} />
       ) : (
         <>
-          <ResultCard title={l.calorie.result} value={`${result} kcal`} subtext="Daily energy expenditure" color="text-orange-500" />
+          <ResultCard title={l.calorie.result} value={`${result} kcal`} subtext="Daily energy expenditure" color="text-amber-600" />
           <ActionButton text={l.recalculate} onClick={reset} isReset />
         </>
       )}
@@ -383,25 +418,25 @@ function StressCalculator({ l }: { l: any }) {
   const reset = () => { setResult(null); setQ1(50); setQ2(50); setQ3(50); };
 
   let category = "";
-  let color = "text-emerald-500";
+  let color = "text-emerald-600";
   if (result !== null) {
-    if (result < 33) { category = "Low Stress - Great Job!"; color = "text-emerald-500"; }
+    if (result < 33) { category = "Low Stress - Great Job!"; color = "text-emerald-600"; }
     else if (result < 66) { category = "Moderate Stress - Take breaks"; color = "text-amber-500"; }
     else { category = "High Stress - Consider Consultation"; color = "text-red-500"; }
   }
 
   const Slider = ({ label, val, setVal }: any) => (
     <div className="space-y-2">
-      <label className="text-xs font-medium text-[#05443e]">{label}</label>
-      <input type="range" min="0" max="100" value={val} onChange={(e) => setVal(Number(e.target.value))} className="w-full accent-[#68eed6]" />
-      <div className="flex justify-between text-[9px] font-bold text-muted-foreground uppercase">
+      <label className="text-[13px] font-medium text-[#191c1b]">{label}</label>
+      <input type="range" min="0" max="100" value={val} onChange={(e) => setVal(Number(e.target.value))} className="w-full accent-[#47614a]" />
+      <div className="flex justify-between text-[10px] font-bold text-[#737971] uppercase tracking-wider">
         <span>{l.stress.sliderLow}</span><span>{l.stress.sliderHigh}</span>
       </div>
     </div>
   );
 
   return (
-    <div className="space-y-6 mt-2">
+    <div className="space-y-6">
       <Slider label={l.stress.q1} val={q1} setVal={setQ1} />
       <Slider label={l.stress.q2} val={q2} setVal={setQ2} />
       <Slider label={l.stress.q3} val={q3} setVal={setQ3} />
@@ -453,8 +488,8 @@ function BedtimeCalculator({ l }: { l: any }) {
   const reset = () => { setResult(null); setWakeTime("07:00"); setHours("8"); };
 
   return (
-    <div className="space-y-4 mt-2">
-      <div className="flex gap-3">
+    <div className="space-y-4">
+      <div className="flex gap-4">
         <InputGroup label={l.bedtime.wake} type="time" value={wakeTime} onChange={(e: any) => setWakeTime(e.target.value)} />
         <InputGroup label={l.bedtime.hours} type="number" value={hours} onChange={(e: any) => setHours(e.target.value)} />
       </div>

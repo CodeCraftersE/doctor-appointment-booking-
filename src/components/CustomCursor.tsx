@@ -10,14 +10,14 @@ export function CustomCursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  // Smooth springs for inertia
-  const springConfig = { damping: 25, stiffness: 250 };
+  // Faster, smoother springs for less lag
+  const springConfig = { damping: 20, stiffness: 450, mass: 0.5 };
   const mainCursorX = useSpring(cursorX, springConfig);
   const mainCursorY = useSpring(cursorY, springConfig);
 
-  // Trailing globule (more lag)
-  const trailCursorX = useSpring(cursorX, { damping: 30, stiffness: 120 });
-  const trailCursorY = useSpring(cursorY, { damping: 30, stiffness: 120 });
+  // Trailing globule (make it follow closer and faster)
+  const trailCursorX = useSpring(cursorX, { damping: 25, stiffness: 250, mass: 0.8 });
+  const trailCursorY = useSpring(cursorY, { damping: 25, stiffness: 250, mass: 0.8 });
 
   useEffect(() => {
     const checkMobile = () => {

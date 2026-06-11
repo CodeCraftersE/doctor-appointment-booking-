@@ -8,7 +8,7 @@ const services = [
   { icon: Leaf, title: "Digestive Issues", desc: "Acidity, IBS, ulcers and gut imbalances." },
   { icon: Brain, title: "Stress & Anxiety", desc: "Mood, sleep and emotional equilibrium." },
   { icon: Shield, title: "Immunity Boost", desc: "Recurrent infections, allergies, low immunity." },
-  { icon: Activity, title: "Chronic Disease", desc: "Asthma, arthritis, thyroid, diabetes support." },
+  { icon: Activity, title: "Chronic Disease", desc: "Asthma, arthritis, thyroid, piles, diabetes support." },
   { icon: Droplet, title: "Hormonal Balance", desc: "PCOS, menstrual & endocrine wellness." },
 ];
 

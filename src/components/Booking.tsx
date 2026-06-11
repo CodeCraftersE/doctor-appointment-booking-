@@ -1,6 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Video, Phone, MapPin, MessageCircle, Calendar, Loader2, Check, Thermometer, UserCircle, Home, Mail, Send, ShieldCheck, ArrowRight, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import { format } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { sendBookingEmail } from "@/services/brevo";
 
 const pricing = [
@@ -24,7 +27,8 @@ export function Booking() {
   const [email, setEmail] = useState("");
   const [problemDesc, setProblemDesc] = useState("");
   const [problemCategory, setProblemCategory] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState<Date>();
+  const [chamber, setChamber] = useState<string>("");
   const [phone, setPhone] = useState("");
 
   // WhatsApp states
@@ -35,6 +39,42 @@ export function Booking() {
   const [emailStatus, setEmailStatus] = useState<BookingStatus>("idle");
   const [emailError, setEmailError] = useState("");
   const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
+
+  const chambers = [
+    { id: "dishari", name: import.meta.env.VITE_CHAMBER_1_NAME || "Dishari", days: [2, 4, 6] },
+    { id: "new-homoeo", name: import.meta.env.VITE_CHAMBER_2_NAME || "The New Homoeo Clinic", days: [1, 3, 5, 0] }
+  ];
+
+  const disabledDays = (d: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (d < today) return true;
+    
+    if (pricing[selected].title === "Chamber Visit" && chamber) {
+      const selectedChamber = chambers.find(c => c.id === chamber);
+      if (selectedChamber && !selectedChamber.days.includes(d.getDay())) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Hahnemann Quotes State
+  const [quoteIndex, setQuoteIndex] = useState(0);
+
+  const hahnemannQuotes = [
+    "The highest ideal of cure is rapid, gentle and permanent restoration of the health.",
+    "There are no diseases, but sick people.",
+    "The physician's high and only mission is to restore the sick to health, to cure.",
+    "In the healthy condition of man, the spiritual vital force rules with unbounded sway."
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteIndex((prev) => (prev + 1) % hahnemannQuotes.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const handleCategorySelect = (e: CustomEvent) => {
@@ -50,17 +90,21 @@ export function Booking() {
     `- Name: ${name || "Not provided"}\n` +
     `- Age: ${age || "Not provided"}\n` +
     `- Sex: ${gender}\n` +
-    `- Mode: ${pricing[selected].title}\n` +
+    `- Mode: ${pricing[selected].title === "Chamber Visit" ? `Chamber Visit (${chambers.find(c=>c.id===chamber)?.name || "Not selected"})` : pricing[selected].title}\n` +
     `- Contact: ${phone || "Not provided"}\n` +
     `- Email: ${email || "Not provided"}\n\n` +
     `*Problem Category:* ${problemCategory || "General Consultation"}\n` +
     `*Description:* ${problemDesc || "Will discuss with doctor"}\n` +
-    `*Preferred Date:* ${date || "ASAP"}`
+    `*Preferred Date:* ${date ? format(date, "PPP") : "ASAP"}`
   );
 
   const handleWhatsAppBooking = () => {
     if (!name || !phone) {
       alert("Please enter at least your Name and Phone number.");
+      return;
+    }
+    if (pricing[selected].title === "Chamber Visit" && !chamber) {
+      alert("Please select a chamber for your visit.");
       return;
     }
     
@@ -92,6 +136,11 @@ export function Booking() {
       setEmailStatus("error");
       return;
     }
+    if (pricing[selected].title === "Chamber Visit" && !chamber) {
+      setEmailError("Please select a chamber for your visit.");
+      setEmailStatus("error");
+      return;
+    }
 
     setEmailStatus("loading");
     setEmailError("");
@@ -102,11 +151,11 @@ export function Booking() {
       gender,
       email: email.trim(),
       phone: phone.trim(),
-      mode: pricing[selected].title,
+      mode: pricing[selected].title === "Chamber Visit" ? `Chamber Visit (${chambers.find(c=>c.id===chamber)?.name || ""})` : pricing[selected].title,
       price: pricing[selected].price,
       category: problemCategory,
       description: problemDesc,
-      preferredDate: date,
+      preferredDate: date ? format(date, "yyyy-MM-dd") : "",
     });
 
     if (result.success) {
@@ -137,8 +186,8 @@ export function Booking() {
 
         <div className="glass-strong rounded-[2.5rem] p-6 md:p-10 grid lg:grid-cols-5 gap-8">
           {/* Pricing options & Left Info */}
-          <div className="lg:col-span-2 flex flex-col">
-            <div className="flex-grow space-y-3">
+          <div className="lg:col-span-2 flex flex-col h-full">
+            <div className="space-y-3">
               <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Choose mode</div>
               {pricing.map((p, i) => (
                 <motion.button
@@ -167,8 +216,66 @@ export function Booking() {
                 </motion.button>
               ))}
             </div>
+
+            {/* Chamber Selection if Chamber Visit is selected */}
+            <AnimatePresence>
+              {pricing[selected].title === "Chamber Visit" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="pt-2 pb-1 space-y-3">
+                    <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Select Chamber</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {chambers.map(c => (
+                        <button
+                          key={c.id}
+                          onClick={() => setChamber(c.id)}
+                          className={`p-3 rounded-xl text-left border transition-all ${
+                            chamber === c.id 
+                              ? "bg-[#05443e] text-white border-transparent shadow-md" 
+                              : "glass border-sage/20 text-[#05443e] hover:bg-white hover:border-sage/40"
+                          }`}
+                        >
+                          <div className="font-bold text-sm leading-tight">{c.name}</div>
+                          <div className="text-[10px] mt-1 opacity-80">
+                            {c.days.map(d => ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d]).join(", ")}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Hahnemann Quotes - Centered in remaining space */}
+            <div className="flex-grow flex items-center justify-center py-8 hidden lg:flex">
+              <div className="relative text-center px-6 max-w-xs">
+                <span className="absolute -top-4 -left-2 text-6xl text-sage/20 font-serif leading-none">"</span>
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={quoteIndex}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.5 }}
+                    className="relative z-10 text-[15px] font-serif text-sage-deep/80 italic leading-relaxed"
+                  >
+                    {hahnemannQuotes[quoteIndex]}
+                  </motion.p>
+                </AnimatePresence>
+                <div className="mt-4 flex items-center justify-center gap-2">
+                  <div className="h-px w-6 bg-sage/30"></div>
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-sage">Dr. Samuel Hahnemann</p>
+                  <div className="h-px w-6 bg-sage/30"></div>
+                </div>
+              </div>
+            </div>
             
-            <div className="mt-8 space-y-4">
+            <div className="mt-auto pt-4 space-y-4">
               <div className="glass rounded-2xl p-5 border border-sage/10">
                 <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Payment Info</div>
                 <div className="text-xs text-muted-foreground leading-relaxed">
@@ -280,13 +387,28 @@ export function Booking() {
                 <div>
                   <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Preferred Date</label>
                   <div className="relative mt-2 group">
-                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-sage transition-colors" />
-                    <input
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="w-full glass rounded-2xl pl-11 pr-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sage transition-all"
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button className="w-full glass rounded-2xl pl-11 pr-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sage transition-all text-left flex items-center justify-between">
+                          <div className="flex items-center">
+                            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-sage transition-colors" />
+                            <span className={!date ? "text-muted-foreground" : "text-[#05443e]"}>
+                              {date ? format(date, "PPP") : "Select date"}
+                            </span>
+                          </div>
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 z-[100]" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={date}
+                          onSelect={setDate}
+                          disabled={disabledDays}
+                          initialFocus
+                          className="bg-white rounded-xl border border-sage/20 shadow-lg"
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
               </div>
