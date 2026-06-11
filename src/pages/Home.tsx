@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
@@ -12,16 +11,11 @@ import { Chambers } from "@/components/Chambers";
 import { ClinicAvailability } from "@/components/ClinicAvailability";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
-import { BottomNav } from "@/components/BottomNav";
 
-import { Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { Activity, Brain, Droplets } from "lucide-react";
 
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-function Index() {
+export function Home() {
   return (
     <main className="min-h-screen">
       <Navbar />

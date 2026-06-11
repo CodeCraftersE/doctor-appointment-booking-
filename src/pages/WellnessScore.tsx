@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
@@ -17,11 +17,7 @@ import {
   Loader2
 } from "lucide-react";
 
-export const Route = createFileRoute("/wellness-score")({
-  component: WellnessScorePage,
-});
-
-function WellnessScorePage() {
+export function WellnessScorePage() {
   const [step, setStep] = useState(0);
   const [data, setData] = useState({
     sleep: 7,
@@ -367,8 +363,7 @@ function WellnessScorePage() {
                   </div>
                   <div className="mt-8 space-y-3">
                     <Link
-                      to="/"
-                      hash="booking"
+                      to="/#booking"
                       className="w-full inline-flex items-center justify-center gap-2 gradient-aqua text-white px-6 py-4 rounded-full text-sm font-bold shadow-lg hover:scale-105 transition-all"
                     >
                       Book Constitutional Consultation

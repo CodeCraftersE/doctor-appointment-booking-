@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Activity, RotateCcw, Languages, HeartPulse, Droplet, Moon, Utensils, Brain, Clock, ShieldCheck, Weight } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 
 // --- Translations ---
 const t = {

@@ -1,5 +1,5 @@
 import { Home, MapPin, Calendar, Heart, Activity } from "lucide-react";
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export function BottomNav() {
   const location = useLocation();
@@ -10,15 +10,15 @@ export function BottomNav() {
   let activeTab = "Home";
   if (pathname === "/wellness-score") activeTab = "Wellness";
   else if (pathname === "/body-assessment") activeTab = "Assessment";
-  else if (pathname === "/" && hash === "chambers") activeTab = "Chambers";
-  else if (pathname === "/" && hash === "booking") activeTab = "Book";
+  else if (pathname === "/" && hash === "#chambers") activeTab = "Chambers";
+  else if (pathname === "/" && hash === "#booking") activeTab = "Book";
   else if (pathname === "/") activeTab = "Home";
 
   // Handle cross-page scrolling and navigation
   const handleHomeNav = (targetHash: string, fallbackId: string) => {
     if (pathname !== "/") {
       // If we aren't on home, navigate to home with the hash
-      navigate({ to: "/", hash: targetHash });
+      navigate(targetHash ? `/#${targetHash}` : "/");
     } else {
       // If we are already on home, just smooth scroll
       if (fallbackId === "#") {
@@ -31,7 +31,7 @@ export function BottomNav() {
         }
       }
       // Since router might not update hash immediately on manual scroll, we can force a hash replace or let it be.
-      navigate({ to: "/", hash: targetHash, replace: true });
+      navigate(targetHash ? `/#${targetHash}` : "/", { replace: true });
     }
   };
 
