@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Video, Phone, MapPin, MessageCircle, Calendar, User, Loader2, Check, Thermometer, UserCircle, Home, Info } from "lucide-react";
+import { Video, Phone, MapPin, MessageCircle, Calendar, Loader2, Check, Thermometer, UserCircle, Home, Mail, Send, ShieldCheck, ArrowRight, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import { sendBookingEmail } from "@/services/brevo";
 
 const pricing = [
   { icon: Video, title: "Video Consultation", price: 500, desc: "Face-to-face online visit" },
@@ -13,17 +14,27 @@ const problems = [
   "Chronic Disease", "Hormonal Balance", "Hair Problem", "Other",
 ];
 
+type BookingStatus = "idle" | "loading" | "success" | "error";
+
 export function Booking() {
   const [selected, setSelected] = useState(0);
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("Male");
+  const [email, setEmail] = useState("");
   const [problemDesc, setProblemDesc] = useState("");
   const [problemCategory, setProblemCategory] = useState("");
   const [date, setDate] = useState("");
   const [phone, setPhone] = useState("");
+
+  // WhatsApp states
   const [isBooking, setIsBooking] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // Email booking states
+  const [emailStatus, setEmailStatus] = useState<BookingStatus>("idle");
+  const [emailError, setEmailError] = useState("");
+  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
 
   useEffect(() => {
     const handleCategorySelect = (e: CustomEvent) => {
@@ -40,7 +51,8 @@ export function Booking() {
     `- Age: ${age || "Not provided"}\n` +
     `- Sex: ${gender}\n` +
     `- Mode: ${pricing[selected].title}\n` +
-    `- Contact: ${phone || "Not provided"}\n\n` +
+    `- Contact: ${phone || "Not provided"}\n` +
+    `- Email: ${email || "Not provided"}\n\n` +
     `*Problem Category:* ${problemCategory || "General Consultation"}\n` +
     `*Description:* ${problemDesc || "Will discuss with doctor"}\n` +
     `*Preferred Date:* ${date || "ASAP"}`
@@ -53,16 +65,61 @@ export function Booking() {
     }
     
     setIsBooking(true);
-    // Premium loading experience
     setTimeout(() => {
       setIsBooking(false);
       setShowSuccess(true);
-      // Brief success pause for feedback
       setTimeout(() => {
         window.open(`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${waMessage}`, "_blank");
         setShowSuccess(false);
       }, 1500);
     }, 1200);
+  };
+
+  const handleEmailBooking = async () => {
+    // Validate mandatory fields
+    if (!name.trim()) {
+      setEmailError("Please enter your name.");
+      setEmailStatus("error");
+      return;
+    }
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError("Please enter a valid email address.");
+      setEmailStatus("error");
+      return;
+    }
+    if (!phone.trim() || phone.replace(/\D/g, "").length < 10) {
+      setEmailError("Please enter a valid phone number.");
+      setEmailStatus("error");
+      return;
+    }
+
+    setEmailStatus("loading");
+    setEmailError("");
+
+    const result = await sendBookingEmail({
+      name: name.trim(),
+      age,
+      gender,
+      email: email.trim(),
+      phone: phone.trim(),
+      mode: pricing[selected].title,
+      price: pricing[selected].price,
+      category: problemCategory,
+      description: problemDesc,
+      preferredDate: date,
+    });
+
+    if (result.success) {
+      setEmailStatus("success");
+      setShowEmailConfirmation(true);
+      // Reset after showing confirmation
+      setTimeout(() => {
+        setEmailStatus("idle");
+      }, 4000);
+    } else {
+      setEmailStatus("error");
+      setEmailError(result.error || "Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -75,7 +132,7 @@ export function Booking() {
           <h2 className="text-4xl md:text-5xl font-serif text-sage-deep">
             Quick, easy <span className="italic text-gradient">consultation booking</span>
           </h2>
-          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">Fill in your details, and we'll connect via WhatsApp to finalize your visit.</p>
+          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">Book directly on our website with email confirmation, or connect instantly via WhatsApp — your choice.</p>
         </div>
 
         <div className="glass-strong rounded-[2.5rem] p-6 md:p-10 grid lg:grid-cols-5 gap-8">
@@ -115,7 +172,7 @@ export function Booking() {
               <div className="glass rounded-2xl p-5 border border-sage/10">
                 <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Payment Info</div>
                 <div className="text-xs text-muted-foreground leading-relaxed">
-                  Consultation fees are paid at the time of session via UPI or cash. Your booking confirmation will be sent on WhatsApp.
+                  Consultation fees are paid at the time of session via UPI or cash. Your booking confirmation will be sent via email or WhatsApp.
                 </div>
               </div>
 
@@ -169,7 +226,40 @@ export function Booking() {
                 </div>
               </div>
 
-              {/* Gender & Phone */}
+              {/* Email & Phone */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                    Email Address
+                    <span className="text-[9px] font-bold text-sage bg-sage/10 px-1.5 py-0.5 rounded-full normal-case tracking-normal">For direct booking only</span>
+                  </label>
+                  <div className="relative mt-2 group">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-sage transition-colors" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value); if (emailStatus === "error") setEmailStatus("idle"); }}
+                      placeholder="your@email.com"
+                      className="w-full glass rounded-2xl pl-11 pr-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sage transition-all"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Phone Number</label>
+                  <div className="relative mt-2 group">
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-sage transition-colors" />
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => { setPhone(e.target.value); if (emailStatus === "error") setEmailStatus("idle"); }}
+                      placeholder="+91 ..."
+                      className="w-full glass rounded-2xl pl-11 pr-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sage transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Gender & Date */}
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Gender</label>
@@ -188,23 +278,6 @@ export function Booking() {
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Phone Number</label>
-                  <div className="relative mt-2 group">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-sage transition-colors" />
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 ..."
-                      className="w-full glass rounded-2xl pl-11 pr-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sage transition-all"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Date & Optional Category */}
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
                   <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Preferred Date</label>
                   <div className="relative mt-2 group">
                     <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-sage transition-colors" />
@@ -216,22 +289,24 @@ export function Booking() {
                     />
                   </div>
                 </div>
-                <div>
-                  <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Category (Optional)</label>
-                  <div className="relative mt-2 group">
-                    <Thermometer className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-sage transition-colors pointer-events-none" />
-                    <select
-                      value={problemCategory}
-                      onChange={(e) => setProblemCategory(e.target.value)}
-                      className="w-full glass rounded-2xl pl-11 pr-4 py-3.5 text-sm font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-sage transition-all"
-                    >
-                      <option value="">Select Category (Optional)</option>
-                      {problems.map((p) => <option key={p} value={p}>{p}</option>)}
-                      {problemCategory && !problems.includes(problemCategory) && (
-                        <option value={problemCategory}>{problemCategory}</option>
-                      )}
-                    </select>
-                  </div>
+              </div>
+
+              {/* Category */}
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Category (Optional)</label>
+                <div className="relative mt-2 group">
+                  <Thermometer className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-sage transition-colors pointer-events-none" />
+                  <select
+                    value={problemCategory}
+                    onChange={(e) => setProblemCategory(e.target.value)}
+                    className="w-full glass rounded-2xl pl-11 pr-4 py-3.5 text-sm font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-sage transition-all"
+                  >
+                    <option value="">Select Category (Optional)</option>
+                    {problems.map((p) => <option key={p} value={p}>{p}</option>)}
+                    {problemCategory && !problems.includes(problemCategory) && (
+                      <option value={problemCategory}>{problemCategory}</option>
+                    )}
+                  </select>
                 </div>
               </div>
 
@@ -300,61 +375,226 @@ export function Booking() {
             </div>
           </div>
 
-            <div className="mt-6 md:mt-8">
-              <button
-                onClick={handleWhatsAppBooking}
-                disabled={isBooking || showSuccess}
-                className="w-full relative overflow-hidden inline-flex items-center justify-center gap-2 px-6 py-4 md:py-5 rounded-full bg-whatsapp text-white font-bold shadow-elegant hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-90 disabled:scale-100"
-              >
-                <AnimatePresence mode="wait">
-                  {isBooking ? (
-                    <motion.div
-                      key="loading"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="flex items-center gap-2"
-                    >
-                      <Loader2 className="size-4 animate-spin" />
-                      <span>Preparing WhatsApp...</span>
-                    </motion.div>
-                  ) : showSuccess ? (
-                    <motion.div
-                      key="success"
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 1.2 }}
-                      className="flex items-center gap-2"
-                    >
-                      <Check className="size-4" />
-                      <span>Details Saved! Redirecting...</span>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="default"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="flex items-center gap-2"
-                    >
-                      <MessageCircle className="size-4" />
-                      <span>Consult on WhatsApp</span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                {(isBooking || showSuccess) && (
+            {/* === DUAL BOOKING CTA === */}
+            <div className="mt-6 md:mt-8 space-y-4">
+              {/* Error message */}
+              <AnimatePresence>
+                {emailStatus === "error" && emailError && (
                   <motion.div
-                    className="absolute inset-0 bg-white/10"
-                    initial={{ x: "-100%" }}
-                    animate={{ x: "100%" }}
-                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                  />
+                    initial={{ opacity: 0, y: -8, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: "auto" }}
+                    exit={{ opacity: 0, y: -8, height: 0 }}
+                    className="flex items-center gap-3 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700"
+                  >
+                    <X className="size-4 shrink-0" />
+                    <span className="text-sm font-medium">{emailError}</span>
+                  </motion.div>
                 )}
-              </button>
+              </AnimatePresence>
+
+              {/* Primary: Direct Website Booking (Email + Phone mandatory) */}
+              <div className="space-y-2">
+                <button
+                  onClick={handleEmailBooking}
+                  disabled={emailStatus === "loading" || emailStatus === "success"}
+                  className="w-full relative overflow-hidden inline-flex items-center justify-center gap-2.5 px-6 py-4 md:py-5 rounded-full gradient-deep text-primary-foreground font-bold shadow-elegant hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-90 disabled:scale-100"
+                >
+                  <AnimatePresence mode="wait">
+                    {emailStatus === "loading" ? (
+                      <motion.div
+                        key="email-loading"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Loader2 className="size-4 animate-spin" />
+                        <span>Confirming Your Booking...</span>
+                      </motion.div>
+                    ) : emailStatus === "success" ? (
+                      <motion.div
+                        key="email-success"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.2 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Check className="size-4" />
+                        <span>Booking Confirmed! Check your email</span>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="email-default"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Send className="size-4" />
+                        <span>Book Consultation</span>
+                        <ArrowRight className="size-4 ml-1" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  {emailStatus === "loading" && (
+                    <motion.div
+                      className="absolute inset-0 bg-white/10"
+                      initial={{ x: "-100%" }}
+                      animate={{ x: "100%" }}
+                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                    />
+                  )}
+                </button>
+                <p className="text-center text-[10px] text-muted-foreground flex items-center justify-center gap-1.5">
+                  <Mail className="size-3" />
+                  Direct booking · Email & phone required · Instant email confirmation
+                </p>
+              </div>
+
+              {/* Divider */}
+              <div className="flex items-center gap-4">
+                <div className="flex-1 h-px bg-sage/10" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">or</span>
+                <div className="flex-1 h-px bg-sage/10" />
+              </div>
+
+              {/* Secondary: WhatsApp Booking (Name + Phone only, no email needed) */}
+              <div className="space-y-2">
+                <button
+                  onClick={handleWhatsAppBooking}
+                  disabled={isBooking || showSuccess}
+                  className="w-full relative overflow-hidden inline-flex items-center justify-center gap-2 px-6 py-4 md:py-5 rounded-full bg-whatsapp text-white font-bold shadow-elegant hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-90 disabled:scale-100"
+                >
+                  <AnimatePresence mode="wait">
+                    {isBooking ? (
+                      <motion.div
+                        key="loading"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Loader2 className="size-4 animate-spin" />
+                        <span>Preparing WhatsApp...</span>
+                      </motion.div>
+                    ) : showSuccess ? (
+                      <motion.div
+                        key="success"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.2 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Check className="size-4" />
+                        <span>Details Saved! Redirecting...</span>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="default"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="flex items-center gap-2"
+                      >
+                        <MessageCircle className="size-4" />
+                        <span>Book via WhatsApp</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  {(isBooking || showSuccess) && (
+                    <motion.div
+                      className="absolute inset-0 bg-white/10"
+                      initial={{ x: "-100%" }}
+                      animate={{ x: "100%" }}
+                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                    />
+                  )}
+                </button>
+                <p className="text-center text-[10px] text-muted-foreground flex items-center justify-center gap-1.5">
+                  <MessageCircle className="size-3" />
+                  Chat booking · Only name & phone needed · No email required
+                </p>
+              </div>
+
+              {/* Trust badge */}
+              <div className="flex items-center justify-center gap-2 pt-2">
+                <ShieldCheck className="size-3.5 text-sage/60" />
+                <span className="text-[10px] text-muted-foreground">Your information is secure and never shared with third parties.</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* === Email Booking Success Overlay === */}
+      <AnimatePresence>
+        {showEmailConfirmation && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center px-4"
+            onClick={() => setShowEmailConfirmation(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className="glass-strong rounded-[2.5rem] p-8 md:p-12 max-w-md w-full text-center relative overflow-hidden"
+            >
+              {/* Decorative glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-aqua/10 via-transparent to-mint/10 opacity-60" />
+
+              <div className="relative z-10">
+                {/* Animated check */}
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", damping: 15, stiffness: 200, delay: 0.1 }}
+                  className="w-20 h-20 rounded-full gradient-deep mx-auto mb-6 flex items-center justify-center shadow-glow"
+                >
+                  <motion.div
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
+                  >
+                    <Check className="size-10 text-white" strokeWidth={3} />
+                  </motion.div>
+                </motion.div>
+
+                <h3 className="text-2xl md:text-3xl font-serif text-sage-deep mb-3">
+                  Booking <span className="italic text-gradient">Confirmed!</span>
+                </h3>
+                
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                  A confirmation email has been sent to <strong className="text-sage-deep">{email}</strong>. 
+                  Our clinic assistant will contact you within 2-4 hours to finalize the appointment.
+                </p>
+
+                <div className="glass rounded-2xl p-4 mb-6 text-left">
+                  <div className="grid grid-cols-2 gap-y-2 text-xs">
+                    <span className="text-muted-foreground font-semibold uppercase tracking-wider">Mode</span>
+                    <span className="text-sage-deep font-bold text-right">{pricing[selected].title}</span>
+                    <span className="text-muted-foreground font-semibold uppercase tracking-wider">Date</span>
+                    <span className="text-sage-deep font-bold text-right">{date ? new Date(date).toLocaleDateString("en-IN", { weekday: "short", month: "short", day: "numeric" }) : "ASAP"}</span>
+                    <span className="text-muted-foreground font-semibold uppercase tracking-wider">Fee</span>
+                    <span className="text-sage-deep font-bold text-right">₹{pricing[selected].price}</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowEmailConfirmation(false)}
+                  className="w-full inline-flex items-center justify-center gap-2 gradient-aqua text-white px-6 py-4 rounded-full text-sm font-bold shadow-lg hover:scale-105 active:scale-95 transition-all"
+                >
+                  Done
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
