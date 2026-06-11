@@ -216,24 +216,29 @@ export function ClinicAvailability() {
 
               {/* Right Side: CTAs */}
               <div className="flex flex-col gap-4 mt-4 lg:mt-0">
-                <DirectBookingDialog 
-                  clinicName={clinic.name}
-                  clinicDays={clinic.days}
-                  trigger={
-                    <button
-                      className="group relative w-full inline-flex items-center justify-between p-1.5 pr-6 rounded-full bg-[#05443e] text-white shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all text-left"
-                    >
-                      <div className="size-12 rounded-full bg-white/20 grid place-items-center backdrop-blur-md shrink-0">
-                        <Calendar className="size-5" />
-                      </div>
-                      <div className="flex flex-col items-start px-3 flex-grow">
-                        <span className="font-bold tracking-wide text-sm leading-tight">Direct Website Booking</span>
-                        <span className="text-[9px] text-[#68eed6] uppercase tracking-widest font-semibold mt-0.5">Email required</span>
-                      </div>
-                      <ChevronRight className="size-5 shrink-0 group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  }
-                />
+                <div className="w-full">
+                  <p className="sm:hidden text-[11px] text-center font-bold text-[#05443e]/80 uppercase tracking-wide mb-2 px-1 leading-snug">
+                    Direct <b>website booking</b>, click on this button, email required
+                  </p>
+                  <DirectBookingDialog 
+                    clinicName={clinic.name}
+                    clinicDays={clinic.days}
+                    trigger={
+                      <button
+                        className="group relative w-full flex items-center justify-between p-2.5 sm:p-1.5 pr-5 sm:pr-6 rounded-full bg-[#05443e] text-white shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all text-left"
+                      >
+                        <div className="size-[3.75rem] sm:size-12 rounded-full bg-white/[0.12] grid place-items-center shrink-0">
+                          <Calendar className="size-7 sm:size-5" />
+                        </div>
+                        <div className="flex flex-col items-start pl-4 pr-2 sm:px-3 flex-1 min-w-0">
+                          <span className="font-bold text-xl sm:text-sm leading-tight tracking-normal">Direct Website Booking</span>
+                          <span className="text-[11px] sm:text-[9px] text-white/50 uppercase tracking-[0.15em] font-semibold mt-1 sm:mt-0.5">Email required</span>
+                        </div>
+                        <ChevronRight className="size-6 sm:size-5 shrink-0 group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    }
+                  />
+                </div>
 
                 <a
                   href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hello, I would like to consult with ${import.meta.env.VITE_DOCTOR_NAME}.`)}`}
