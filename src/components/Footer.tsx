@@ -1,4 +1,5 @@
 import { MessageCircle, Phone, Mail, Facebook } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function Footer() {
   const docName = import.meta.env.VITE_DOCTOR_NAME;
@@ -74,10 +75,10 @@ export function Footer() {
               </a>
             </div>
             <ul className="mt-5 space-y-2 text-sm">
-              <li><a href="#about" className="hover:text-sage">About</a></li>
-              <li><a href="#treatments" className="hover:text-sage">Treatments</a></li>
-              <li><a href="#booking" className="hover:text-sage">Book</a></li>
-              <li><a href="/smart-calculators" className="hover:text-sage font-medium text-sage-deep">Smart Calculators</a></li>
+              <li><Link to="/#about" className="hover:text-sage">About</Link></li>
+              <li><Link to="/#treatments" className="hover:text-sage">Treatments</Link></li>
+              <li><Link to="/#booking" className="hover:text-sage">Book</Link></li>
+              <li><Link to="/smart-calculators" className="hover:text-sage font-medium text-sage-deep">Smart Calculators</Link></li>
             </ul>
           </div>
         </div>

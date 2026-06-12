@@ -12,10 +12,29 @@ import { ClinicAvailability } from "@/components/ClinicAvailability";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Activity, Brain, Droplets, ChevronRight } from "lucide-react";
 
 export function Home() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      // Small timeout to ensure DOM is fully rendered before trying to measure/scroll
+      const timeoutId = setTimeout(() => {
+        const element = document.querySelector(location.hash);
+        if (element) {
+          const top = element.getBoundingClientRect().top + window.scrollY - 80; // account for navbar height
+          window.scrollTo({ top, behavior: "smooth" });
+        }
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [location]);
+
   return (
     <main className="min-h-screen">
       <Navbar />

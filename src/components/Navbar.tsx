@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const links = [
   { label: "About", href: "/#about" },
@@ -25,7 +26,7 @@ export function Navbar() {
       <div className="hidden md:flex bg-white/60 backdrop-blur-xl border border-white/50 rounded-[2rem] px-5 py-3 items-center justify-between max-w-6xl mx-auto shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         {/* Left Side: Logo */}
         <div className="flex items-center gap-3">
-          <a href="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-[#05443e] flex items-center justify-center text-white font-serif text-[22px] font-bold shadow-md shrink-0">
               {import.meta.env.VITE_DOCTOR_NAME ? import.meta.env.VITE_DOCTOR_NAME.replace("Dr. ", "").charAt(0) : "S"}
             </div>
@@ -33,24 +34,23 @@ export function Navbar() {
               <div className="font-serif text-2xl font-bold text-[#05443e] tracking-tight leading-none whitespace-nowrap">{import.meta.env.VITE_DOCTOR_NAME}</div>
               <div className="text-[11px] uppercase tracking-[0.15em] text-[#05443e]/70 font-semibold mt-1 whitespace-nowrap">Classical Homeopathy</div>
             </div>
-          </a>
+          </Link>
         </div>
 
-        {/* Right Side: Links & CTAs */}
         <div className="flex items-center gap-8 ml-auto">
           <div className="flex items-center gap-8 text-sm font-medium">
             {links.map((l) => (
-              <a key={l.href} href={l.href} className="text-[#05443e] hover:text-[#05443e]/70 transition-colors">
+              <Link key={l.href} to={l.href} className="text-[#05443e] hover:text-[#05443e]/70 transition-colors">
                 {l.label}
-              </a>
+              </Link>
             ))}
           </div>
-          <a
-            href="/#booking"
+          <Link
+            to="/#booking"
             className="bg-[#05443e] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:scale-105 transition-transform shadow-md"
           >
             Book Now
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -58,12 +58,12 @@ export function Navbar() {
           MOBILE NAVBAR (EXACT SCREENSHOT MATCH)
           ========================================= */}
       <div className="md:hidden flex items-center justify-between bg-gradient-to-r from-white via-[#f8fcfb] to-[#e8f6f4] rounded-full pl-6 pr-2 py-2 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white">
-        <a href="/" className="font-serif text-[#05443e] font-black text-[22px] tracking-tighter leading-none">
+        <Link to="/" className="font-serif text-[#05443e] font-black text-[22px] tracking-tighter leading-none">
           {import.meta.env.VITE_DOCTOR_NAME?.toUpperCase()}
-        </a>
+        </Link>
         
-        <a
-          href="/smart-calculators"
+        <Link
+          to="/smart-calculators"
           className="w-[46px] h-[46px] rounded-full bg-[#05443e] flex items-center justify-center text-white shadow-md hover:scale-105 transition-transform shrink-0"
           aria-label="Smart Health Calculators"
         >
@@ -74,7 +74,7 @@ export function Navbar() {
             <path d="M20 13v4" />
             <path d="M20 21v.01" />
           </svg>
-        </a>
+        </Link>
       </div>
 
     </motion.nav>
