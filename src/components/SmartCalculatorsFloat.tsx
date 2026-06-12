@@ -19,31 +19,31 @@ export function SmartCalculatorsFloat() {
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
               className="max-w-[280px]"
             >
-              <div className="relative group block glass-strong p-4 rounded-3xl border border-emerald-500/30 shadow-2xl overflow-hidden bg-white/95">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/10 to-teal-500/10 pointer-events-none" />
+              <div className="relative group block p-4 rounded-3xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.08)] overflow-hidden bg-gradient-to-br from-[#e0f4ec] via-[#f2faf7] to-white">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/5 to-transparent pointer-events-none" />
                 
                 <button 
                   onClick={(e) => { e.preventDefault(); setIsOpen(false); }}
-                  className="absolute top-2 right-2 p-1.5 text-muted-foreground hover:text-red-500 bg-white/50 rounded-full transition-colors z-20"
+                  className="absolute top-2 right-2 p-1.5 text-muted-foreground hover:text-red-500 bg-white/80 backdrop-blur-md rounded-full shadow-sm transition-colors z-20"
                 >
-                  <X className="size-3" />
+                  <X className="size-3.5" />
                 </button>
 
-                <Link to="/smart-calculators" onClick={() => setIsOpen(false)} className="relative z-10 flex flex-col gap-2 cursor-pointer pt-2">
-                  <div className="flex items-center gap-2">
-                    <div className="size-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                      <Activity className="size-4" />
+                <Link to="/smart-calculators" onClick={() => setIsOpen(false)} className="relative z-10 flex flex-col gap-2.5 cursor-pointer pt-2">
+                  <div className="flex items-center gap-3">
+                    <div className="size-10 rounded-full bg-[#d5f3e5] text-[#0f8c61] flex items-center justify-center shrink-0">
+                      <Activity className="size-5" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">100% Free Tool</span>
-                      <span className="text-sm font-bold text-[#05443e] leading-tight">Smart Health Calculators</span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#0f8c61]">100% Free Tool</span>
+                      <span className="text-[17px] font-bold text-[#04443e] leading-tight">Smart Health Calculators</span>
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground leading-tight pr-4">
+                  <p className="text-[13px] text-muted-foreground leading-snug pr-2">
                     Check your BMI, Water Needs & Stress Score instantly. No signup required.
                   </p>
-                  <div className="flex items-center text-xs font-bold text-emerald-600 mt-1">
-                    Try it now <ChevronRight className="size-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                  <div className="flex items-center text-[13px] font-bold text-[#0f8c61] mt-0.5">
+                    Try it now <ChevronRight className="size-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
               </div>
